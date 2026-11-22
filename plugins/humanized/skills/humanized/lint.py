@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Mechanical checks for people-text. Reports problems, never fixes them.
+"""Mechanical checks for humanized. Reports problems, never fixes them.
 
 Usage: python3 lint.py [FILE]   (reads stdin when FILE is omitted)
 Prints "line: rule: fragment" for each hit and exits with 1 if anything was found.

@@ -8,8 +8,8 @@
   },
   "plugins": [
     {
-      "name": "people-text",
-      "source": "./plugins/people-text",
+      "name": "humanized",
+      "source": "./plugins/humanized",
       "description": "Write and edit text so it reads as human-written, not AI-generated."
     },
     {

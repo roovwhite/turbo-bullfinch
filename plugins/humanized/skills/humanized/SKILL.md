@@ -1,9 +1,9 @@
 ---
-name: "people-text"
+name: "humanized"
 description: "Use when writing or editing any text that must read as human-written (posts, articles, channel content, work texts, resumes) so it does not look AI-generated. Also use for check-only requests (\"это похоже на нейросеть?\", \"проверь, не ИИ ли\", \"только проверь\", \"не правь\"): return a verdict with evidence and do not rewrite."
 ---
 
-# people-text
+# humanized
 
 Rules for writing text that reads as written by a person. Based on the Russian Wikipedia essay "Википедия:Признаки сгенерированности текста" (ВП:ПРГЕН). The signs are observations, not proof of generation, and detectors are unreliable. The goal is concrete, living text, not just evading checks.
 
@@ -103,10 +103,10 @@ Re-read for vague filler. Use supplied details, evidence and a reasoned position
 
 ## Mechanical check
 
-`lint.py` is alongside this `SKILL.md`. It catches mechanical patterns and fixes nothing. If shell access and Python 3 are available, resolve the path relative to the installed skill directory and run it on the source and final text. For example, replace `/path/to/people-text` with that directory:
+`lint.py` is alongside this `SKILL.md`. It catches mechanical patterns and fixes nothing. If shell access and Python 3 are available, resolve the path relative to the installed skill directory and run it on the source and final text. For example, replace `/path/to/humanized` with that directory:
 
 ```bash
-python3 /path/to/people-text/lint.py draft.md
+python3 /path/to/humanized/lint.py draft.md
 ```
 
 It prints "line: rule: fragment" and exits with 1 when something is found. The rules are dash, quotes, utm, chatbot and emoji.
