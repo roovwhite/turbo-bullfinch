@@ -1,4 +1,4 @@
-# turbo-bullfinch
+# Turbo Bullfinch
 
 ![turbo-bullfinch logo](logo.png)
 
