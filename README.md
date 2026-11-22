@@ -7,7 +7,7 @@ Turbo Bullfinch collects skills for writing and software development. Use it to 
 ## Skills and plugins
 
 - [humanized](plugins/humanized/README.md) helps write, edit, and check natural-sounding text. Available for Claude Code, Codex, and other agents supporting Agent Skills.
-- [character](plugins/character/skills/character/SKILL.md) develops fictional characters from a premise, deepens existing ones, and reviews dialogue and decisions in scenes.
+- <img src="plugins/character/logo-portraits.png" alt="" width="40" height="40"> [character](plugins/character/skills/character/SKILL.md) develops fictional characters from a premise, deepens existing ones, and reviews dialogue and decisions in scenes.
 - [commit](plugins/commit/skills/commit/SKILL.md) reviews and commits task changes with a task ID.
 - [push](plugins/push/skills/push/SKILL.md) commits task changes and pushes the current branch.
 - [mr](plugins/mr/skills/mr/SKILL.md) reviews and publishes task changes as a GitLab merge request or GitHub pull request.
