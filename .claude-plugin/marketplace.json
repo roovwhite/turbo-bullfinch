@@ -1,0 +1,16 @@
+{
+  "name": "turbo-bullfinch",
+  "owner": {
+    "name": "roovwhite"
+  },
+  "metadata": {
+    "description": "A collection of skills and plugins for everyday work."
+  },
+  "plugins": [
+    {
+      "name": "people-text",
+      "source": "./plugins/people-text",
+      "description": "Write and edit text so it reads as human-written, not AI-generated."
+    }
+  ]
+}
