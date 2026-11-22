@@ -13,6 +13,11 @@
       "description": "Write and edit text so it reads as human-written, not AI-generated."
     },
     {
+      "name": "character",
+      "source": "./plugins/character",
+      "description": "Develop fictional characters and test how they act and speak in a scene that fits the book."
+    },
+    {
       "name": "commit",
       "source": "./plugins/commit",
       "description": "Review and commit the current task's changes with a task ID."
