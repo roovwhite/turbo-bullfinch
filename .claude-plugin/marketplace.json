@@ -18,6 +18,11 @@
       "description": "Review and commit the current task's changes with a task ID."
     },
     {
+      "name": "push",
+      "source": "./plugins/push",
+      "description": "Commit the current task's changes and push the current branch."
+    },
+    {
       "name": "mr",
       "source": "./plugins/mr",
       "description": "Review and publish the current task as a merge or pull request."
