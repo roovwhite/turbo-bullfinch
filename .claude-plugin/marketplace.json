@@ -11,6 +11,16 @@
       "name": "people-text",
       "source": "./plugins/people-text",
       "description": "Write and edit text so it reads as human-written, not AI-generated."
+    },
+    {
+      "name": "commit",
+      "source": "./plugins/commit",
+      "description": "Review and commit the current task's changes with a task ID."
+    },
+    {
+      "name": "mr",
+      "source": "./plugins/mr",
+      "description": "Review and publish the current task as a merge or pull request."
     }
   ]
 }
