@@ -2,12 +2,12 @@
 
 ![turbo-bullfinch logo](logo.png)
 
-Turbo Bullfinch collects skills for writing and editing. Use it to develop a fictional character or revise a draft for its reader.
+Turbo Bullfinch gives your AI assistant specific guidance for writing and editing. It starts with your material, whether that’s a draft, a story premise, or a scene, and uses your audience, voice, and existing decisions to guide its suggestions.
 
 ## Skills and plugins
 
-- <img src="plugins/humanized/logo.png" alt="" width="40" height="40"> [humanized](plugins/humanized/README.md) helps you write for your audience, cut filler, and preserve the author’s voice and facts. Review mode explains what sounds formulaic while keeping the draft intact. Available for Claude Code, Codex, and other agents supporting Agent Skills.
-- <img src="plugins/character/logo-portraits.png" alt="" width="40" height="40"> [character](plugins/character/skills/character/SKILL.md) develops fictional characters from a premise, deepens existing ones, and reviews dialogue and decisions in scenes.
+- <img src="plugins/humanized/logo.png" alt="" width="40" height="40"> [humanized](plugins/humanized/README.md) is for writers, editors, and anyone drafting posts, articles, or work emails. Use it to cut filler, clarify what the reader needs to know, and keep the author’s voice and facts. In review mode, it points out what sounds formulaic and explains why.
+- <img src="plugins/character/logo-portraits.png" alt="" width="40" height="40"> [character](plugins/character/skills/character/SKILL.md) is for fiction writers developing a cast or revising a manuscript. Use it to work out what a character wants, test what they’d do under pressure, or pinpoint why a line of dialogue or a decision feels out of character.
 
 ## Claude Code marketplace
 
