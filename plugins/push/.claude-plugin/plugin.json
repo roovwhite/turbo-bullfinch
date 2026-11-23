@@ -1,5 +1,0 @@
-{
-  "name": "push",
-  "version": "1.0.0",
-  "description": "Commit the current task's changes and push the current branch."
-}

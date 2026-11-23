@@ -16,26 +16,6 @@
       "name": "character",
       "source": "./plugins/character",
       "description": "Develop fictional characters and test how they act and speak in a scene that fits the book."
-    },
-    {
-      "name": "commit",
-      "source": "./plugins/commit",
-      "description": "Review and commit the current task's changes with a task ID."
-    },
-    {
-      "name": "push",
-      "source": "./plugins/push",
-      "description": "Commit the current task's changes and push the current branch."
-    },
-    {
-      "name": "mr",
-      "source": "./plugins/mr",
-      "description": "Review and publish the current task as a merge or pull request."
-    },
-    {
-      "name": "clean-merged-branches",
-      "source": "./plugins/clean-merged-branches",
-      "description": "Delete local Git branches already merged into main."
     }
   ]
 }
