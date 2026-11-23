@@ -1,0 +1,5 @@
+{
+  "name": "clean-merged-branches",
+  "version": "1.0.0",
+  "description": "Delete local Git branches already merged into main."
+}

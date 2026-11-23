@@ -1,34 +1,38 @@
 #!/usr/bin/env python3
-"""Mechanical checks for humanized. Reports problems, never fixes them.
-
-Usage: python3 lint.py [FILE]   (reads stdin when FILE is omitted)
-Prints "line: rule: fragment" for each hit and exits with 1 if anything was found.
-
-Dash and quote checks skip frontmatter, fenced code, inline code, URLs and ">" quotes.
-"""
+"""Report likely chatbot wrappers, service tracking, and optional punctuation issues."""
+import argparse
 import re
 import sys
+from urllib.parse import parse_qsl, urlsplit
 
-# Escaped on purpose: the repository itself must stay free of these characters.
 DASH = re.compile("[\u2014\u2013]| -- ")
 QUOTES = re.compile("[\u00ab\u00bb\u201c\u201d\u201e\u2018\u2019\u2039\u203a]")
-UTM = re.compile(r"utm_source=(openai|chatgpt\.com)", re.I)
-EMOJI = re.compile("[\U0001F000-\U0001FAFF\u2600-\u27bf\u2b00-\u2bff\uFE0F]")
+SERVICE_SOURCES = {"openai", "chatgpt.com"}
 
 FENCE = re.compile(r"^(`{3,}|~{3,})")
 INLINE_CODE = re.compile(r"(`+).+?\1")
-URL = re.compile(r"\]\([^)]*\)|<https?://[^>]*>|https?://\S+")
-HEADING_OR_ITEM = re.compile(r"^\s*(#{1,6}|[-*+]|\d+[.)])\s")
-MARKUP = re.compile(r"^[\s>#*+\-\d.)]*")
+URL_BODY = r"""(?:[^\s<>()[\]"«»“”]+|\([^()\s]*\))+"""
+URL = re.compile(
+    rf"\]\(<?(?P<destination>{URL_BODY})"
+    rf"|(?P<absolute>https?://{URL_BODY})",
+    re.I,
+)
+NON_PROSE = re.compile(r"^(?:#{1,6}(?:\s|$)|(?:-{3,}|\*{3,}|_{3,})\s*$)")
+MARKUP = re.compile(r"^(?:\s*(?:[-*+] |\d+[.)] ))?\s*[*_]*")
 
 CHATBOT_START = re.compile(
-    r"^(конечно|безусловно|разумеется|отличный вопрос|ниже представлен)", re.I
+    r"^(?:(?:конечно|безусловно|разумеется|отличный вопрос)[!.,]\s+)?"
+    r"(?:вот\s+(?:текст|обзор|переписанный текст|исправленный (?:текст|вариант)|"
+    r"обновлённый вариант|готовый вариант)\b"
+    r"|ниже\s+(?:представлен[ао]?|привед[её]н[ао]?)\s+(?:подробн\w+\s+)?"
+    r"(?:обзор|анализ|текст|вариант|версия)\b)",
+    re.I,
 )
 CHATBOT_END = re.compile(
-    r"(?:^|[.!?)]\s+)(?:"
-    r"надеюсь,? (это|мой ответ|информация) (помогл|помож)"
-    r"|(сообщите|дайте знать|напишите)( мне)?,? если"
-    r"|если у вас (есть|остались|возникнут) (ещё |еще )?вопросы)",
+    r"(?:^|(?<=[.!?])\s+)(?:"
+    r"надеюсь,?\s+(?:это|мой ответ)\s+(?:помогло?|поможет)\b"
+    r"|(?:сообщите|дайте знать|напишите)(?: мне)?,?\s+если"
+    r"\s+(?:хотите|нужен)\s+(?:другой вариант|ещ[её] один вариант)\b)",
     re.I,
 )
 
@@ -38,74 +42,98 @@ def blank(match):
 
 
 def prose_lines(lines):
-    """Yield (number, line) outside frontmatter and fenced code blocks."""
-    in_front = bool(lines) and lines[0].strip() == "---"
+    """Yield numbered lines outside frontmatter, fences, and block quotes."""
+    frontmatter_end = 0
+    if lines and lines[0].strip() == "---":
+        frontmatter_end = next(
+            (number for number, line in enumerate(lines[1:], 2) if line.strip() == "---"),
+            0,
+        )
+
     fence = None
     for number, line in enumerate(lines, 1):
-        stripped = line.strip()
-        if in_front:
-            if number > 1 and stripped == "---":
-                in_front = False
+        if number <= frontmatter_end:
             continue
+        stripped = line.strip()
+        marker = FENCE.match(stripped)
         if fence:
-            if stripped.startswith(fence):
+            if (
+                marker
+                and marker[0].startswith(fence)
+                and not stripped[marker.end():].strip()
+            ):
                 fence = None
             continue
-        opening = FENCE.match(stripped)
-        if opening:
-            fence = opening.group(1)
+        if marker:
+            fence = marker[0]
             continue
-        yield number, line
+        if not stripped.startswith(">"):
+            yield number, line
+
+
+def has_service_tracking(url):
+    try:
+        query = urlsplit(url).query
+    except ValueError:
+        return False
+    return any(
+        key.lower() == "utm_source" and value.lower() in SERVICE_SOURCES
+        for key, value in parse_qsl(query)
+    )
 
 
 def fragment(line, start, end, width=25):
     left, right = max(0, start - width), min(len(line), end + width)
-    text = line[left:right].strip()
-    return ("..." if left else "") + text + ("..." if right < len(line) else "")
+    return ("..." if left else "") + line[left:right].strip() + ("..." if right < len(line) else "")
 
 
-def lint(text):
+def lint(text, *, ascii_punctuation=False):
     hits = []
-    lines = list(prose_lines(text.splitlines()))
-    for number, line in lines:
+    boundaries = []
+    for number, line in prose_lines(text.splitlines()):
         no_code = INLINE_CODE.sub(blank, line)
-        if not line.lstrip().startswith(">"):
-            plain = URL.sub(blank, no_code)
-            for rule, pattern in (("dash", DASH), ("quotes", QUOTES)):
-                m = pattern.search(plain)
-                if m:
-                    hits.append((number, rule, fragment(line, m.start(), m.end())))
-        for url in URL.finditer(no_code):
-            if UTM.search(url.group()):
-                hits.append((number, "utm", fragment(line, url.start(), url.end())))
-        if HEADING_OR_ITEM.match(line):
-            m = EMOJI.search(no_code)
-            if m:
-                hits.append((number, "emoji", fragment(line, m.start(), m.end())))
+        for match in URL.finditer(no_code):
+            url = match["destination"]
+            if url is None:
+                url = match["absolute"].rstrip(".,;:!?")
+            if has_service_tracking(url):
+                hits.append((number, "utm", fragment(line, match.start(), match.end())))
 
-    text_lines = [(n, line) for n, line in lines if line.strip()]
-    if text_lines:
-        number, line = text_lines[0]
-        if CHATBOT_START.match(MARKUP.sub("", line)):
-            hits.append((number, "chatbot", fragment(line, 0, 0, 50)))
-        number, line = text_lines[-1]
-        m = CHATBOT_END.search(MARKUP.sub("", line))
-        if m:
-            hits.append((number, "chatbot", fragment(line, 0, 0, 50)))
+        plain = URL.sub(blank, no_code)
+        if ascii_punctuation:
+            for rule, pattern in (("dash", DASH), ("quotes", QUOTES)):
+                match = pattern.search(plain)
+                if match:
+                    hits.append((number, rule, fragment(line, match.start(), match.end())))
+
+        if plain.strip() and not NON_PROSE.match(plain.lstrip()):
+            offset = MARKUP.match(plain).end()
+            boundaries.append((number, line, plain[offset:], offset))
+
+    if boundaries:
+        for boundary, pattern in ((boundaries[0], CHATBOT_START), (boundaries[-1], CHATBOT_END)):
+            number, line, prose, offset = boundary
+            match = pattern.search(prose)
+            if match:
+                hits.append((number, "chatbot", fragment(line, offset + match.start(), offset + match.end())))
+
     return sorted(hits)
 
 
 def main(argv):
-    if len(argv) > 2:
-        sys.exit("usage: lint.py [FILE]")
-    if len(argv) == 2:
-        with open(argv[1], encoding="utf-8") as f:
-            text = f.read()
-    else:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--ascii-punctuation", action="store_true", help="also check dashes and quotes")
+    parser.add_argument("file", nargs="?", help="path to a UTF-8 draft, or omit to read stdin")
+    args = parser.parse_args(argv[1:])
+    if args.file is None:
         text = sys.stdin.read()
-    hits = lint(text)
-    for number, rule, frag in hits:
-        print("{}: {}: {}".format(number, rule, frag))
+    else:
+        with open(args.file, encoding="utf-8") as file:
+            text = file.read()
+
+    hits = lint(text, ascii_punctuation=args.ascii_punctuation)
+    for number, rule, snippet in hits:
+        print(f"{number}: {rule}: {snippet}")
     return 1 if hits else 0
 
 

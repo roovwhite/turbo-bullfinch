@@ -10,7 +10,7 @@
     {
       "name": "humanized",
       "source": "./plugins/humanized",
-      "description": "Write and edit text so it reads as human-written, not AI-generated."
+      "description": "Draft, edit, and review natural-sounding text for its audience and genre. Replace filler with concrete language, preserve the author’s voice and facts, and get specific feedback without rewriting."
     },
     {
       "name": "character",
@@ -31,6 +31,11 @@
       "name": "mr",
       "source": "./plugins/mr",
       "description": "Review and publish the current task as a merge or pull request."
+    },
+    {
+      "name": "clean-merged-branches",
+      "source": "./plugins/clean-merged-branches",
+      "description": "Delete local Git branches already merged into main."
     }
   ]
 }
