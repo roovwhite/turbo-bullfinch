@@ -9,8 +9,6 @@ Turbo Bullfinch collects skills for writing and editing. Use it to develop a fic
 - <img src="plugins/humanized/logo.png" alt="" width="40" height="40"> [humanized](plugins/humanized/README.md) helps you write for your audience, cut filler, and preserve the author’s voice and facts. Review mode explains what sounds formulaic while keeping the draft intact. Available for Claude Code, Codex, and other agents supporting Agent Skills.
 - <img src="plugins/character/logo-portraits.png" alt="" width="40" height="40"> [character](plugins/character/skills/character/SKILL.md) develops fictional characters from a premise, deepens existing ones, and reviews dialogue and decisions in scenes.
 
-The Git skills have moved to [Custom Git](https://github.com/roovwhite/custom-git).
-
 ## Claude Code marketplace
 
 ```bash
